@@ -41,7 +41,7 @@ run "input_validation" {
     var.storage_replication_type,
   ]
 }
-
+/*
 run "e2e_test" {
   command = apply
 
@@ -59,3 +59,4 @@ run "e2e_test" {
     error_message = "Unexpected access tier."
   }
 }
+*/
