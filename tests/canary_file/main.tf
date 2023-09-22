@@ -14,7 +14,7 @@ resource "azurerm_storage_blob" "canary" {
   storage_container_name = "$web"
   type                   = "Block"
   content_type           = "text/plain"
-  source                 = "./canary.txt"
+  source                 = "${path.module}/canary.txt"
 }
 
 data "azurerm_storage_blob" "canary" {

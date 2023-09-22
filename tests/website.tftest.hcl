@@ -1,3 +1,4 @@
+# Common values for all test runs
 variables {
   prefix   = "tftest"
   location = "centralus"
@@ -88,7 +89,7 @@ run "canary_file" {
   }
 
   assert {
-    condition     = data.azurerm_storage_blob.canary.content_md5 == filemd5("./files/index.html")
-    error_message = "The index.html file checksum is invalid."
+    condition     = data.azurerm_storage_blob.canary.content_md5 == filemd5("./tests/canary_file/canary.txt")
+    error_message = "The canary file checksum is invalid - something is very wrong."
   }
 }
