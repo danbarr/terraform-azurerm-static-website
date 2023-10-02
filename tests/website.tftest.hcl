@@ -42,7 +42,7 @@ run "input_validation" {
   # Invalid values
   variables {
     prefix                   = "InvalidPrefix"
-    location                 = "france"
+    location                 = "australia"
     env                      = "sandbox"
     storage_kind             = "FileStorage"
     storage_tier             = "Invalid"
