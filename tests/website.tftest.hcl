@@ -1,6 +1,6 @@
 # Common values for all test runs
 variables {
-  prefix              = "tftest"
+  prefix              = "hashicafe"
   location            = "centralus"
   env                 = "demo"
   resource_group_name = "demo-rg"
@@ -73,7 +73,7 @@ run "e2e_test" {
   }
 
   assert {
-    condition     = azurerm_storage_account.website.access_tier == "Hot"
+    condition     = azurerm_storage_account.website.access_tier == "hot"
     error_message = "Unexpected access tier."
   }
 }
