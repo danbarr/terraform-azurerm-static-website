@@ -1,8 +1,9 @@
 # Common values for all test runs
 variables {
-  prefix   = "tftest"
-  location = "centralus"
-  env      = "demo"
+  prefix              = "tftest"
+  location            = "centralus"
+  env                 = "demo"
+  resource_group_name = "demo-rg"
 }
 
 provider "azurerm" {
