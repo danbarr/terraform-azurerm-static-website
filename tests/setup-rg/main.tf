@@ -8,7 +8,12 @@ terraform {
   }
 }
 
+resource "random_integer" "id" {
+  min = 100
+  max = 999
+}
+
 resource "azurerm_resource_group" "this" {
-  name     = var.resource_group_name
+  name     = "${var.resource_group_name}-${random_integer.id.result}"
   location = var.location
 }
