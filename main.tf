@@ -50,7 +50,7 @@ resource "azurerm_storage_account" "website" {
       days = var.delete_retention_days
     }
     container_delete_retention_policy {
-      days = 7
+      days = var.delete_retention_days
     }
     versioning_enabled = true
   }
