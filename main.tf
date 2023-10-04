@@ -34,14 +34,15 @@ resource "random_integer" "id" {
 }
 
 resource "azurerm_storage_account" "website" {
-  name                      = "${var.prefix}website${random_integer.id.result}"
-  resource_group_name       = var.resource_group_name
-  location                  = var.location
-  account_kind              = var.storage_kind
-  account_tier              = var.storage_tier
-  account_replication_type  = var.storage_replication_type
-  enable_https_traffic_only = true
-  min_tls_version           = "TLS1_2"
+  name                              = "${var.prefix}website${random_integer.id.result}"
+  resource_group_name               = var.resource_group_name
+  location                          = var.location
+  account_kind                      = var.storage_kind
+  account_tier                      = var.storage_tier
+  account_replication_type          = var.storage_replication_type
+  enable_https_traffic_only         = true
+  min_tls_version                   = "TLS1_2"
+  infrastructure_encryption_enabled = true
 
   static_website {
     index_document = "index.html"
@@ -51,6 +52,13 @@ resource "azurerm_storage_account" "website" {
     environment = var.env
     department  = var.department
     application = "HashiCafe website"
+  }
+
+  lifecycle {
+    precondition {
+      condition     = var.storage_kind == "StorageV2" || (var.storage_kind == "BlockBlobStorage" && var.storage_tier == "Premium")
+      error_message = "Infrastructure encryption for BlockBlobStorage requires Premium tier."
+    }
   }
 }
 
