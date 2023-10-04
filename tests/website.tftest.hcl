@@ -13,9 +13,21 @@ provider "azurerm" {
 run "unit_tests" {
   command = plan
 
+  variables {
+    delete_retention_days = 14
+  }
+
   assert {
     condition     = azurerm_storage_account.website.public_network_access_enabled == true
     error_message = "Public access is not enabled."
+  }
+  assert {
+    condition     = azurerm_storage_account.website.blob_properties[0].delete_retention_policy[0].days == var.delete_retention_days
+    error_message = "Blob deletion retention days doesn't match input."
+  }
+  assert {
+    condition     = azurerm_storage_account.website.blob_properties[0].container_delete_retention_policy[0].days == var.delete_retention_days
+    error_message = "Container deletion retention days doesn't match input."
   }
 }
 
@@ -30,6 +42,7 @@ run "input_validation" {
     storage_kind             = "FileStorage"
     storage_tier             = "Invalid"
     storage_replication_type = "RAGRS"
+    delete_retention_days    = 400
   }
 
   expect_failures = [
@@ -39,6 +52,7 @@ run "input_validation" {
     var.storage_kind,
     var.storage_tier,
     var.storage_replication_type,
+    var.delete_retention_days
   ]
 }
 
