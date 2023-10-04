@@ -13,9 +13,21 @@ provider "azurerm" {
 run "unit_tests" {
   command = plan
 
+  variables {
+    delete_retention_days = 14
+  }
+
   assert {
     condition     = azurerm_storage_account.website.public_network_access_enabled == true
     error_message = "Public access is not enabled."
+  }
+  assert {
+    condition     = azurerm_storage_account.website.blob_properties[0].delete_retention_policy[0].days == var.delete_retention_days
+    error_message = "Blob deletion retention days doesn't match input."
+  }
+  assert {
+    condition     = azurerm_storage_account.website.blob_properties[0].container_delete_retention_policy[0].days == var.delete_retention_days
+    error_message = "Container deletion retention days doesn't match input."
   }
 }
 
@@ -30,6 +42,7 @@ run "input_validation" {
     storage_kind             = "FileStorage"
     storage_tier             = "Invalid"
     storage_replication_type = "RAGRS"
+    delete_retention_days    = 400
   }
 
   expect_failures = [
@@ -39,6 +52,7 @@ run "input_validation" {
     var.storage_kind,
     var.storage_tier,
     var.storage_replication_type,
+    var.delete_retention_days
   ]
 }
 
@@ -55,7 +69,7 @@ run "setup_resource_group" {
   }
 }
 
-run "e2e_test" {
+run "create_website" {
   command = apply
 
   variables {
@@ -66,26 +80,25 @@ run "e2e_test" {
     condition     = startswith(azurerm_storage_account.website.name, "tftestwebsite")
     error_message = "Storage account name didn't match the expected value."
   }
-
   assert {
     condition     = azurerm_storage_account.website.access_tier == "Hot"
     error_message = "Unexpected access tier."
   }
 }
 
-run "canary_file" {
+run "website_is_running" {
   command = apply
 
-  variables {
-    storage_account_name = run.e2e_test.storage_account_name
+  module {
+    source = "./tests/http-validate"
   }
 
-  module {
-    source = "./tests/canary_file"
+  variables {
+    endpoint = run.create_website.endpoint
   }
 
   assert {
-    condition     = data.azurerm_storage_blob.canary.content_md5 == filemd5("./tests/canary_file/canary.txt")
-    error_message = "The canary file checksum is invalid - something is very wrong."
+    condition     = data.http.index.status_code == 200
+    error_message = "Website responded with HTTP status ${data.http.index.status_code}"
   }
 }
