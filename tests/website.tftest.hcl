@@ -34,6 +34,14 @@ run "unit_tests" {
     condition     = azurerm_storage_account.website.public_network_access_enabled == true
     error_message = "Public access is not enabled."
   }
+  assert {
+    condition = azurerm_storage_account.website.blob_properties.delete_retention_policy.days == var.delete_retention_days
+    error_message = "Blob deletion retention days doesn't match input."
+  }
+  assert {
+    condition = azurerm_storage_account.website.blob_properties.container_delete_retention_policy.days == var.delete_retention_days
+    error_message = "Container deletion retention days doesn't match input."
+  }
 
 }
 
