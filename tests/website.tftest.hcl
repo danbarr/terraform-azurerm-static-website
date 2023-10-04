@@ -10,24 +10,12 @@ provider "azurerm" {
   features {}
 }
 
-run "setup_resource_group" {
-  command = apply
-
-  variables {
-    location            = var.location
-    resource_group_name = "tftest-temporary"
-  }
-
-  module {
-    source = "./tests/setup-rg"
-  }
-}
-
 run "unit_tests" {
   command = plan
 
   variables {
-    resource_group_name = run.setup_resource_group.resource_group_name
+    resource_group_name   = var.resource_group_name
+    delete_retention_days = 14
   }
 
   assert {
@@ -35,11 +23,11 @@ run "unit_tests" {
     error_message = "Public access is not enabled."
   }
   assert {
-    condition = azurerm_storage_account.website.blob_properties.delete_retention_policy.days == var.delete_retention_days
+    condition     = azurerm_storage_account.website.blob_properties[0].delete_retention_policy[0].days == var.delete_retention_days
     error_message = "Blob deletion retention days doesn't match input."
   }
   assert {
-    condition = azurerm_storage_account.website.blob_properties.container_delete_retention_policy.days == var.delete_retention_days
+    condition     = azurerm_storage_account.website.blob_properties[0].container_delete_retention_policy[0].days == var.delete_retention_days
     error_message = "Container deletion retention days doesn't match input."
   }
 
@@ -56,6 +44,7 @@ run "input_validation" {
     storage_kind             = "FileStorage"
     storage_tier             = "Invalid"
     storage_replication_type = "RAGRS"
+    delete_retention_days    = 400
   }
 
   expect_failures = [
@@ -65,7 +54,21 @@ run "input_validation" {
     var.storage_kind,
     var.storage_tier,
     var.storage_replication_type,
+    var.delete_retention_days
   ]
+}
+
+run "setup_resource_group" {
+  command = apply
+
+  variables {
+    location            = var.location
+    resource_group_name = "tftest-temporary"
+  }
+
+  module {
+    source = "./tests/setup-rg"
+  }
 }
 
 run "e2e_test" {
