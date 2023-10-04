@@ -45,6 +45,16 @@ resource "azurerm_storage_account" "website" {
   infrastructure_encryption_enabled = true
   cross_tenant_replication_enabled  = false
 
+  blob_properties {
+    delete_retention_policy {
+      days = var.delete_retention_days
+    }
+    container_delete_retention_policy {
+      days = var.delete_retention_days
+    }
+    versioning_enabled = true
+  }
+
   static_website {
     index_document = "index.html"
   }
