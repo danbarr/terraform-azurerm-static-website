@@ -43,6 +43,7 @@ resource "azurerm_storage_account" "website" {
   enable_https_traffic_only         = true
   min_tls_version                   = "TLS1_2"
   infrastructure_encryption_enabled = true
+  cross_tenant_replication_enabled  = false
 
   static_website {
     index_document = "index.html"
