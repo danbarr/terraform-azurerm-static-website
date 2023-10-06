@@ -65,13 +65,3 @@ variable "storage_replication_type" {
     error_message = "Please use LRS or GRS only"
   }
 }
-
-variable "delete_retention_days" {
-  type = number
-  description = "Number of days to retain deleted objects."
-  default = 7
-  validation {
-    condition     = var.delete_retention_days >= 1 && var.delete_retention_days <= 365
-    error_message = "Retention days must be between 1 and 365 days."
-  }
-}
