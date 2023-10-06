@@ -10,31 +10,13 @@ provider "azurerm" {
   features {}
 }
 
-run "setup_resource_group" {
-  command = apply
-
-  variables {
-    location            = var.location
-    resource_group_name = "tftest-temporary"
-  }
-
-  module {
-    source = "./tests/setup-rg"
-  }
-}
-
 run "unit_tests" {
   command = plan
-
-  variables {
-    resource_group_name = run.setup_resource_group.resource_group_name
-  }
 
   assert {
     condition     = azurerm_storage_account.website.public_network_access_enabled == true
     error_message = "Public access is not enabled."
   }
-
 }
 
 run "input_validation" {
@@ -58,6 +40,19 @@ run "input_validation" {
     var.storage_tier,
     var.storage_replication_type,
   ]
+}
+
+run "setup_resource_group" {
+  command = apply
+
+  variables {
+    location            = var.location
+    resource_group_name = "tftest-temporary"
+  }
+
+  module {
+    source = "./tests/setup-rg"
+  }
 }
 
 run "e2e_test" {
