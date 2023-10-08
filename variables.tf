@@ -11,7 +11,7 @@ variable "location" {
   type        = string
   description = "The region where the resources are created."
   validation {
-    condition     = can(regex("us[0-9]?$", var.location))
+    condition     = can(regex("us[0-9]?", var.location))
     error_message = "Only US regions allowed."
   }
 }
