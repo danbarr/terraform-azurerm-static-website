@@ -16,7 +16,7 @@ variable "endpoint" {
 }
 
 resource "time_sleep" "wait" {
-  create_duration = "5s"
+  create_duration = "30s"
 }
 
 data "http" "index" {
