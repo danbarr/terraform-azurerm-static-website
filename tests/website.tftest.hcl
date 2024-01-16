@@ -94,7 +94,7 @@ run "website_is_running" {
   }
 
   variables {
-    endpoint = run.create_website.endpoint
+    endpoint = "${run.create_website.endpoint}/bad.html"
   }
 
   assert {
