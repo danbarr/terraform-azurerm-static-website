@@ -1,6 +1,6 @@
 # Common values for all test runs
 variables {
-  prefix              = "tftest"
+  prefix              = "test"
   location            = "centralus"
   env                 = "demo"
   resource_group_name = "demo-rg"
