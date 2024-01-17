@@ -1,6 +1,6 @@
 # Common values for all test runs
 variables {
-  prefix              = "tftest"
+  prefix              = "test"
   location            = "centralus"
   env                 = "demo"
   resource_group_name = "demo-rg"
@@ -94,7 +94,7 @@ run "website_is_running" {
   }
 
   variables {
-    endpoint = run.create_website.endpoint
+    endpoint = "${run.create_website.endpoint}/bad.html"
   }
 
   assert {
